@@ -1,13 +1,35 @@
-// Enkele constantes die op verschillende plekken gebruikt kunnen worden.
+// Implementatie van standaard functies.
 
-#ifndef ConstantesHVar  // voorkom dat dit bestand meerdere keren
-#define ConstantesHVar  // ge-include wordt
+#include <iostream>
+#include <cstdlib>  // voor rand
+#include "standaard.h"
+using namespace std;
 
-const int MaxNrTijdsloten = 50;
-const int MaxNrTracks = 10;
-const int MaxNrDocenten = 40;
-const int MaxNrVakken = 50;
-const int MaxNrZalen = 5;
+//*************************************************************************
 
-#endif
+bool integerInBereik (const char *variabele, int waarde,
+							int minWaarde, int maxWaarde)
+{
+	if (waarde>=minWaarde && waarde<=maxWaarde)
+		return true;
+	else
+	{ cout << variabele << "=" << waarde << ", maar moet in [" << minWaarde
+				<< "," << maxWaarde << "] liggen." << endl;
+		return false;
+	}
+
+}  // integerInBereik
+
+//*************************************************************************
+
+int randomGetal (int min, int max)
+{ int bereik,
+		r;
+
+bereik = max - min + 1;
+
+r = ((rand())%bereik) + min;
+return r;
+
+}  // randomGetal
 
