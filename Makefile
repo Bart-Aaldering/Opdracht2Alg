@@ -1,21 +1,17 @@
-// Defintie van standaard functies.
+CC = g++
 
-#ifndef StandaardHVar  // om te voorkomen dat dit .h bestand meerdere keren
-#define StandaardHVar  // wordt ge-include 
+CompileParms = -c -Wall -std=c++11
 
-// Controleer of variabele met naam `variabele' een waarde `waarde' heeft
-// die tussen (inclusief) minWaarde en maxWaarde in ligt.
-// Zo nee, geef een passende foutmelding.
-//
-// Voorbeeld van aanroep:
-//   if (integerInBereik ("teller", teller, 0, 1000))
-//     ...
-bool integerInBereik (const char *variabele, int waarde,
-                      int minWaarde, int maxWaarde);
+OBJS = standaard.o rooster.o main.o
 
-// Genereer een random geheel getal r waarvoor  min <= r <= max.
-// Pre: min <= max;
-int randomGetal (int min, int max);
+Opdr: $(OBJS)
+	$(CC) $(OBJS) -o Rooster
 
-#endif
+standaard.o: standaard.cc standaard.h
+	$(CC) $(CompileParms)  standaard.cc
 
+rooster.o: rooster.cc standaard.h constantes.h rooster.h
+	$(CC) $(CompileParms)  rooster.cc
+
+main.o: main.cc standaard.h rooster.h
+	$(CC) $(CompileParms)  main.cc
