@@ -4,7 +4,7 @@
 #include <fstream>
 #include "standaard.h"
 #include "rooster.h"
-#include <cstring>
+
 using namespace std;
 
 //*************************************************************************
@@ -54,15 +54,14 @@ bool Rooster::leesIn (const char* invoerNaam)
 	for (int i = 0; i < nrVakken; i++) {
 		vakken[i] = new Vak;
 
-		invoer >> vakken[i]->naam;
-		invoer.get();
+		getline(invoer, vakken[i]->naam);
 
 		invoer >> vakken[i]->docent;
 		invoer >> vakken[i]->nrTracks;
 		invoer.get();
 
 		for(int j = 0; j < vakken[i]->nrTracks; j++) {
-			invoer >> vakken[i]->tracks;
+			invoer >> vakken[i]->tracks[j];
 		}
 		invoer.get();
 	}
@@ -73,7 +72,7 @@ bool Rooster::leesIn (const char* invoerNaam)
 		cout << vakken[i]->nrTracks << endl;
 
 		for(int j = 0; j < vakken[i]->nrTracks; j++) {
-			cout << vakken[i]->tracks << ' ';
+			cout << vakken[i]->tracks[j] << ' ';
 		}
 		cout << endl;
 	}
