@@ -22,7 +22,7 @@ const int MaxBestandsNaamLengte = 30; // maximale lengte van een bestandsnaam
 // Retourneer: de keuze van de gebruiker
 int keuzeUitMenu ()
 { int keuze;
-
+	cout << "a";
 	cout << endl;
 	cout << "1. Een rooster bepalen (backtracking)" << endl;
 	cout << "2. Een zo kort mogelijk rooster bepalen (backtracking)" << endl;
