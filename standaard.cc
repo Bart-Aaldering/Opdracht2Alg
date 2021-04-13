@@ -17,19 +17,15 @@ bool integerInBereik (const char *variabele, int waarde,
 				<< "," << maxWaarde << "] liggen." << endl;
 		return false;
 	}
-
 }  // integerInBereik
 
 //*************************************************************************
 
 int randomGetal (int min, int max)
-{ int bereik,
-		r;
-
-bereik = max - min + 1;
-
-r = ((rand())%bereik) + min;
-return r;
-
+{ 
+	int bereik, r;
+	bereik = max - min + 1;
+	r = ((rand())%bereik) + min;
+	return r;
 }  // randomGetal
 
