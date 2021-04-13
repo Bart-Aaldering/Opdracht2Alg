@@ -11,7 +11,7 @@ using namespace std;
 // Default constructor
 Rooster::Rooster ()
 {
-  // TODO: implementeer (zo nodig) deze constructor
+	// TODO: implementeer (zo nodig) deze constructor
 
 }  // default constructor
 
@@ -19,47 +19,44 @@ Rooster::Rooster ()
 
 bool Rooster::leesIn (const char* invoerNaam)
 {
-  // TODO: implementeer deze memberfunctie
+	// TODO: implementeer deze memberfunctie
 
-  return true;
-
+	return true;
 }  // leesIn
 
 //*************************************************************************
 
 void Rooster::drukAf ()
 {
-  // TODO: implementeer deze memberfunctie
+	// TODO: implementeer deze memberfunctie
 
 }  // drukAf ()
 
 //*************************************************************************
 
 bool Rooster::bepaalRooster (int rooster[MaxNrTijdsloten][MaxNrZalen],
-                        long long &aantalDeelroosters)
+								long long &aantalDeelroosters)
 {
-  // TODO: implementeer deze memberfunctie
+	// TODO: implementeer deze memberfunctie
 
-  return true;
-
+	return true;
 }  // bepaalRooster
 
 //*************************************************************************
 
 bool Rooster::bepaalMinRooster (int rooster[MaxNrTijdsloten][MaxNrZalen],
-                        long long &aantalDeelroosters)
+								long long &aantalDeelroosters)
 {
-  // TODO: implementeer deze memberfunctie
+	// TODO: implementeer deze memberfunctie
 
-  return true;
-
+	return true;
 }  // bepaalMinRooster
-  
+
 //*************************************************************************
 
 void Rooster::drukAfRooster (int rooster[MaxNrTijdsloten][MaxNrZalen])
 {
-  // TODO: implementeer deze memberfunctie
+	// TODO: implementeer deze memberfunctie
 
 }  // drukAfRooster
 
@@ -67,7 +64,7 @@ void Rooster::drukAfRooster (int rooster[MaxNrTijdsloten][MaxNrZalen])
 
 void Rooster::bepaalRoosterGretig (int rooster[MaxNrTijdsloten][MaxNrZalen])
 {
-  // TODO: implementeer deze functie
+	// TODO: implementeer deze functie
 
 }  // bepaalRoosterGretig
 
