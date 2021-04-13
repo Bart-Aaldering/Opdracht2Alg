@@ -4,6 +4,25 @@
 #define RoosterHVar  // ge-include wordt
 
 #include "constantes.h"
+#include <cstring>
+
+class Docent
+{
+	public:
+		int nrBeschikbareTijdsloten;
+		int beschikbareTijdsloten[50];
+	private:
+};
+
+class Vak
+{
+	public:
+		char[50] naam;
+		int docent;
+		int nrTracks;
+		int tracks[10];
+	private:
+};
 
 class Rooster
 { 
@@ -85,6 +104,9 @@ class Rooster
 		void bepaalRoosterGretig (int rooster[MaxNrTijdsloten][MaxNrZalen]);
 	private:
 		// TODO: uw eigen memberfuncties en -variabelen
+		Docent* docenten[40];
+		Vak* vakken[50];
+
 
 		int nrDagen,       // aantal dagen in het rooster
 			nrUrenPerDag,  // aantal uren per dag
