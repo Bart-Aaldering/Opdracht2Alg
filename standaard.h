@@ -11,10 +11,11 @@
 //   if (integerInBereik ("teller", teller, 0, 1000))
 //     ...
 bool integerInBereik (const char *variabele, int waarde,
-                      int minWaarde, int maxWaarde);
+						int minWaarde, int maxWaarde);
 
 // Genereer een random geheel getal r waarvoor  min <= r <= max.
 // Pre: min <= max;
 int randomGetal (int min, int max);
 
 #endif
+
