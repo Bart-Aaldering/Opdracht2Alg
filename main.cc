@@ -21,7 +21,8 @@ const int MaxBestandsNaamLengte = 30; // maximale lengte van een bestandsnaam
 // en vraag een keuze van de gebruiker.
 // Retourneer: de keuze van de gebruiker
 int keuzeUitMenu ()
-{ int keuze;
+{ 
+	int keuze;
 
 	cout << endl;
 	cout << "1. Een rooster bepalen (backtracking)" << endl;
@@ -43,8 +44,8 @@ int keuzeUitMenu ()
 // Roep vervolgens r1 aan voor het gekozen soort rooster.
 // Herhaal dit totdat de gebruiker aangeeft te willen stoppen.
 void menuVoorInstantie (Rooster *r1)
-{ int keuze,
-		rooster[MaxNrTijdsloten][MaxNrZalen];
+{ 
+	int keuze, rooster[MaxNrTijdsloten][MaxNrZalen];
 	long long aantalDeelroosters;  // aantal deelroosters dat we hebben
 												// opgebouwd
 	clock_t t1, t2;
