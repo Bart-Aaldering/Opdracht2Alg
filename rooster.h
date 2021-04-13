@@ -4,7 +4,7 @@
 #define RoosterHVar  // ge-include wordt
 
 #include "constantes.h"
-#include <cstring>
+#include <string>
 
 class Docent
 {
@@ -17,7 +17,7 @@ class Docent
 class Vak
 {
 	public:
-		char[50] naam;
+		string naam = "";
 		int docent;
 		int nrTracks;
 		int tracks[10];
