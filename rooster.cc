@@ -66,17 +66,6 @@ bool Rooster::leesIn (const char* invoerNaam)
 		}
 		invoer.get();
 	}
-	for (int i = 0; i < nrVakken; i++) {
-		cout << vakken[i]->naam << endl;
-
-		cout << vakken[i]->docent;
-		cout << vakken[i]->nrTracks << endl;
-
-		for(int j = 0; j < vakken[i]->nrTracks; j++) {
-			cout << vakken[i]->tracks[j] << ' ';
-		}
-		cout << endl;
-	}
 	return true;
 }  // leesIn
 
@@ -103,6 +92,7 @@ void Rooster::drukAf ()
 	cout << "Hoeveelheid vakken: " << nrVakken << endl;
 	cout << "Vak info:" << endl;
 	for (int i = 0; i < nrVakken; i++) {
+		cout << "  Vak nummer: " << i << endl;
 		cout << "  Naam vak: " << vakken[i]->naam << endl;
 		cout << "  Docent: " << vakken[i]->docent << endl;
 		cout << "  Hoeveelheid tracks: " << vakken[i]->nrTracks << endl;
@@ -120,6 +110,20 @@ void Rooster::drukAf ()
 	cout << endl << endl;
 
 }  // drukAf ()
+
+//*************************************************************************
+
+bool Rooster::checkdups(vector<int> arr) {
+	int arrSize = sizeof(arr)/sizeof(arr[0]);
+	vector<int> dup;
+	for (int i = 0; i < arrSize; i++) {
+		for (int j = 0; j < i; j++) {
+			if (dup[j] == arr[i])
+				return false;
+		}
+		dup.push_back(arr[i]);
+	}
+	return true;
 
 //*************************************************************************
 
