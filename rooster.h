@@ -5,6 +5,7 @@
 
 #include "constantes.h"
 #include <string>
+#include <vector>
 
 class Docent
 {
@@ -47,7 +48,8 @@ class Rooster
 
 		// Druk de informatie van de instantie af op het scherm.
 		void drukAf ();
-
+		bool checkdups(vector<int> arr);
+	
 		// Bepaal zo mogelijk een rooster voor de verschillende tracks,
 		// rekening houdend met de beschikbaarheid van de docenten,
 		// en de eisen aan de tracks.
