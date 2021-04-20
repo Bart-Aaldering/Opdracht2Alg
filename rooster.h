@@ -107,7 +107,8 @@ class Rooster
 		Docent* docenten[40];
 		Vak* vakken[50];
 
-
+		string invoernaam = ""; //naam van de invoerfile
+	
 		int nrDagen,       // aantal dagen in het rooster
 			nrUrenPerDag,  // aantal uren per dag
 			nrZalen,       // aantal beschikbare zalen
