@@ -46,7 +46,6 @@ bool Rooster::leesIn (const char* invoerNaam)
 		}
 		invoer.get();
 	}
-	invoer.get();
 
 	invoer >> nrVakken;
 	invoer.get();
