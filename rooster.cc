@@ -29,9 +29,9 @@ bool Rooster::leesIn (const char* invoerNaam)
 		cout << "Kan file niet openen." << endl;
 		return false;
 	}
-
-	invoernaam = invoerNaam; //slaat invoernaam op
-
+	
+	invoernaam = invoerNaam; //slaat invoernaam op 
+	
 	invoer >> nrDagen;
 	invoer >> nrUrenPerDag;
 	invoer >> nrZalen;
@@ -116,7 +116,7 @@ void Rooster::drukAf ()
 
 //*************************************************************************
 
-bool Rooster::checkdups(vector<int> arr)
+bool Rooster::checkdups(vector<int> arr) 
 {
 	int arrSize = sizeof(arr)/sizeof(arr[0]);
 	vector<int> dup;
@@ -131,8 +131,8 @@ bool Rooster::checkdups(vector<int> arr)
 }
 
 //*************************************************************************
+
 bool Rooster::intersect(int arr1[], int s1, int arr2[], int s2) {
-	//returns 1 if no intersect
 	int s = 0;
 	for (int i = 0; i < s1; i++) {
 		for (int j = 0; j < s2; j++) {
@@ -149,18 +149,20 @@ bool Rooster::intersect(int arr1[], int s1, int arr2[], int s2) {
 
 //*************************************************************************
 
-
-bool Rooster::docentBeschikbaar(int docent, int waarde) {
-	// Kan de docent op dat tijdstip les geven?
+// Kan de docent op dat tijdstip les geven?
+bool Rooster::docentBeschikbaar(int docent, int tijdslot) {
 	for (int i = 0; i < docenten[docent]->nrBeschikbareTijdsloten; i++) {
-		if (waarde == docenten[docent]->beschikbareTijdsloten[i]) {
+		if (tijdslot == docenten[docent]->beschikbareTijdsloten[i]) {
 			return true;
 		}
 	}
 	return false;
 }
 
-bool Rooster::dupTracks(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
+//*************************************************************************
+
+// Hebben leerlingen van dezelfde track 2 vakken op hetzelfde moment?
+bool Rooster::overlapTracks(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 								int tijdslot) {
 	//Hebben leerlingen niet 2 vakken op hetzelfde moment?
 	bool overlap = false;
@@ -171,16 +173,19 @@ bool Rooster::dupTracks(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 									vakken[rooster[tijdslot][i]]->nrTracks,
 									vak->tracks,vak->nrTracks)) {
 					overlap = true;
-				};
+				}
 			}
 		}
 	}
 	return overlap;
 }
 
+//*************************************************************************
+
+// Heeft deze track les vandaag?
 vector<int> Rooster::lesDag(int track, int rooster[MaxNrTijdsloten][MaxNrZalen],
-							int tijdslot) {
-	// Heeft deze track les vandaag?
+							int tijdslot)
+{
 	vector<int> tijden;
 	int dag = tijdslot/nrDagen;
 	for (int i = dag*nrUrenPerDag; i < (dag+1)*nrUrenPerDag; i++) {
@@ -195,8 +200,12 @@ vector<int> Rooster::lesDag(int track, int rooster[MaxNrTijdsloten][MaxNrZalen],
 	return tijden;
 }
 
+//*************************************************************************
+
+// 
 bool Rooster::nulOfTweeVak(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
-								int tijdslot) {
+								int tijdslot)
+{
 	vector<int> lessen;
 	int l;
 	// Heeft een track max 1 tussenuur?
@@ -214,8 +223,12 @@ bool Rooster::nulOfTweeVak(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 	return false;
 }
 
+//*************************************************************************
+
+
 bool Rooster::lesDocent(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
-								int tijdslot) {
+								int tijdslot) 
+{
 	//Heeft een docent maximaal 1 vak op een dag
 	int dag = tijdslot/nrDagen;
 	for (int i = dag*nrUrenPerDag; i < (dag+1)*nrUrenPerDag; i++) {
@@ -233,9 +246,7 @@ bool Rooster::tussenuur(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 	//vector<int> lessen = lesDag(vak->tracks[i], rooster, tijdslot);
 	//hier ben ik bezig...
 }
-
-
-
+	
 //*************************************************************************
 
 bool Rooster::bepaalRooster (int rooster[MaxNrTijdsloten][MaxNrZalen],
@@ -251,25 +262,25 @@ bool Rooster::bepaalRooster (int rooster[MaxNrTijdsloten][MaxNrZalen],
 	for (int i = 0; i < nrDagen*nrUrenPerDag; i++) {
 		for (int j = 0; j < nrZalen; j++) {
 			aantalDeelroosters++;
-			if (rooster[i][j] == -1) {
-				if (docentBeschikbaar(vakken[vakIndex]->docent,i) && // docent kan op dit uur
-					!dupTracks(vakken[vakIndex],rooster,i) // && leerlingen niet 2 vakken op hetzelfde moment
-					// lesDocent(vakken[vakIndex],rooster,i) && // maximaal 1 les per dag voor een docent
-					// nulOfTweeVak(vakken[vakIndex],rooster,i)
-					) { // maximaal 1 tussenuur en niet meer dan 2 uur op een dag
-					rooster[i][j] = vakIndex;
-					vakIndex++;
-					if (vakIndex == nrVakken) {
-						vakIndex = 0;
+			if (rooster[i][j] == -1 && 
+				docentBeschikbaar(vakken[vakIndex]->docent,i) && // docent kan op dit uur
+				!overlapTracks(vakken[vakIndex],rooster,i) // && // leerlingen niet 2 vakken op hetzelfde moment
+				// lesDocent(vakken[vakIndex],rooster,i) && // maximaal 1 les per dag voor een docent
+				// nulOfTweeVak(vakken[vakIndex],rooster,i)
+				) { // maximaal 1 tussenuur en niet meer dan 2 uur op een dag
+				
+				rooster[i][j] = vakIndex;
+				vakIndex++;
+				if (vakIndex == nrVakken) {
+					vakIndex = 0;
+					return true;
+				} else {
+					if (bepaalRooster(rooster, aantalDeelroosters)) {
 						return true;
-					} else {
-						if (bepaalRooster(rooster, aantalDeelroosters)) {
-							return true;
-						}
 					}
-					vakIndex--;
 				}
 				rooster[i][j] = -1;
+				vakIndex--;
 			}
 		}
 	}
