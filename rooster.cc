@@ -149,7 +149,7 @@ bool Rooster::intersect(int arr1[], int s1, int arr2[], int s2) {
 //*************************************************************************
 
 
-bool Rooster::docerntBeschikbaar(int docent, int waarde) {
+bool Rooster::docentBeschikbaar(int docent, int waarde) {
 	// Kan de docent op dat tijdstip les geven?
 	for (int i = 0; i < docenten[docent]->nrBeschikbareTijdsloten; i++) {
 		if (waarde == docenten[docent]->beschikbareTijdsloten[i]) {
@@ -161,15 +161,13 @@ bool Rooster::docerntBeschikbaar(int docent, int waarde) {
 
 bool Rooster::dupTracks(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 								int tijdslot) {
-	// Hebben leerlingen niet 2 vakken op hetzelfde moment?
+	//Hebben leerlingen niet 2 vakken op hetzelfde moment?
 	if (nrZalen > 1) {
 		for (int i = 0; i < nrZalen; i++) {
-			for (int j = 0; j < vakken[rooster[tijdslot][i]]->nrTracks; j++) {
-				for (int k = 0; k < vak->nrTracks; k++) {
-					if (vakken[rooster[tijdslot][i]]->tracks[j] == vak->tracks[k]) {
-						return true;
-					}
-				}
+			if (rooster[tijdslot][i] != -1) {
+				return intersect(vakken[rooster[tijdslot][i]]->tracks,
+									vakken[rooster[tijdslot][i]]->nrTracks,
+									vak->tracks,vak->nrTracks);
 			}
 		}
 	}
@@ -250,22 +248,22 @@ bool Rooster::bepaalRooster (int rooster[MaxNrTijdsloten][MaxNrZalen],
 		for (int j = 0; j < nrZalen; j++) {
 			aantalDeelroosters++;
 			if (rooster[i][j] == -1) {
-				rooster[i][j] = vak;
-				if (docentBeschikbaar(vakken[vak]->docent,i) && // docent kan op dit uur
-					!dupTracks(vakken[vak],rooster,i) && // leerlingen niet 2 vakken op hetzelfde moment
-					// lesDocent(vakken[vak],rooster,i) && // maximaal 1 les per dag voor een docent
-					// nulOfTweeVak(vakken[vak],rooster,i)
+				rooster[i][j] = vakIndex;
+				if (docentBeschikbaar(vakken[vakIndex]->docent,i) && // docent kan op dit uur
+					!dupTracks(vakken[vakIndex],rooster,i) // && leerlingen niet 2 vakken op hetzelfde moment
+					// lesDocent(vakken[vakIndex],rooster,i) && // maximaal 1 les per dag voor een docent
+					// nulOfTweeVak(vakken[vakIndex],rooster,i)
 					) { // maximaal 1 tussenuur en niet meer dan 2 uur op een dag
-					vak++;
-					if (vak == nrVakken) {
-						vak = 0;
+					vakIndex++;
+					if (vakIndex == nrVakken) {
+						vakIndex = 0;
 						return true;
 					} else {
 						if (bepaalRooster(rooster, aantalDeelroosters)) {
 							return true;
 						}
 					}
-					vak--;
+					vakIndex--;
 				}
 				rooster[i][j] = -1;
 			}
