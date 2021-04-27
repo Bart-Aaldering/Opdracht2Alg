@@ -107,7 +107,7 @@ void Rooster::drukAf ()
 		cout << vakken[i]->tracks[vakken[i]->nrTracks-1] << endl;
 		cout << endl;
 	}
-	for (int i = 0; i < 27 + invoernaam.length(); i++) {
+	for (int i = 0; i < static_cast<int>(27 + invoernaam.length()); i++) {
 		cout << "-";
 	}
 	cout << endl << endl;
@@ -116,7 +116,8 @@ void Rooster::drukAf ()
 
 //*************************************************************************
 
-bool Rooster::checkdups(vector<int> arr) {
+bool Rooster::checkdups(vector<int> arr) 
+{
 	int arrSize = sizeof(arr)/sizeof(arr[0]);
 	vector<int> dup;
 	for (int i = 0; i < arrSize; i++) {
@@ -128,6 +129,8 @@ bool Rooster::checkdups(vector<int> arr) {
 	}
 	return true;
 }
+
+//*************************************************************************
 bool Rooster::intersect(int arr1[], int s1, int arr2[], int s2) {
 	int s = 0;
 	for (int i = 0; i < s1; i++) {
@@ -146,11 +149,10 @@ bool Rooster::intersect(int arr1[], int s1, int arr2[], int s2) {
 //*************************************************************************
 
 
-bool Rooster::zoekInArray(int doc, int waarde) {
-	//Kan de docent op dat tijdstip les geven?
-	for (int i = 0; i < docenten[doc]->nrBeschikbareTijdsloten; i++) {
-		cout << "a";
-		if (waarde == docenten[doc]->beschikbareTijdsloten[i]) {
+bool Rooster::docerntBeschikbaar(int docent, int waarde) {
+	// Kan de docent op dat tijdstip les geven?
+	for (int i = 0; i < docenten[docent]->nrBeschikbareTijdsloten; i++) {
+		if (waarde == docenten[docent]->beschikbareTijdsloten[i]) {
 			return true;
 		}
 	}
@@ -159,7 +161,7 @@ bool Rooster::zoekInArray(int doc, int waarde) {
 
 bool Rooster::dupTracks(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 								int tijdslot) {
-	//Hebben leerlingen niet 2 vakken op hetzelfde moment?
+	// Hebben leerlingen niet 2 vakken op hetzelfde moment?
 	if (nrZalen > 1) {
 		for (int i = 0; i < nrZalen; i++) {
 			for (int j = 0; j < vakken[rooster[tijdslot][i]]->nrTracks; j++) {
@@ -176,7 +178,7 @@ bool Rooster::dupTracks(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 
 vector<int> Rooster::lesDag(int track, int rooster[MaxNrTijdsloten][MaxNrZalen],
 							int tijdslot) {
-	//Heeft deze track les vandaag?
+	// Heeft deze track les vandaag?
 	vector<int> tijden;
 	int dag = tijdslot/nrDagen;
 	for (int i = dag*nrUrenPerDag; i < (dag+1)*nrUrenPerDag; i++) {
@@ -195,7 +197,7 @@ bool Rooster::nulOfTweeVak(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 								int tijdslot) {
 	vector<int> lessen;
 	int l;
-	//Heeft een track max 1 tussenuur?
+	// Heeft een track max 1 tussenuur?
 	for (int i = 0; i < vak->nrTracks; i++) {
 		lessen = lesDag(vak->tracks[i], rooster, tijdslot);
 		l = lessen.size();
@@ -235,11 +237,41 @@ bool Rooster::tussenuur(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 //*************************************************************************
 
 bool Rooster::bepaalRooster (int rooster[MaxNrTijdsloten][MaxNrZalen],
-								long long &aantalDeelroosters)
+						long long &aantalDeelroosters)
 {
-	// TODO: implementeer deze memberfunctie
-
-	return true;
+	if (!aantalDeelroosters) {
+		for (int i = 0; i < MaxNrTijdsloten; i++) {
+			for (int j = 0; j < MaxNrZalen; j++) {
+				rooster[i][j] = -1;
+			}
+		}
+	}
+	for (int i = 0; i < nrDagen*nrUrenPerDag; i++) {
+		for (int j = 0; j < nrZalen; j++) {
+			aantalDeelroosters++;
+			if (rooster[i][j] == -1) {
+				rooster[i][j] = vak;
+				if (docentBeschikbaar(vakken[vak]->docent,i) && // docent kan op dit uur
+					!dupTracks(vakken[vak],rooster,i) && // leerlingen niet 2 vakken op hetzelfde moment
+					// lesDocent(vakken[vak],rooster,i) && // maximaal 1 les per dag voor een docent
+					// nulOfTweeVak(vakken[vak],rooster,i)
+					) { // maximaal 1 tussenuur en niet meer dan 2 uur op een dag
+					vak++;
+					if (vak == nrVakken) {
+						vak = 0;
+						return true;
+					} else {
+						if (bepaalRooster(rooster, aantalDeelroosters)) {
+							return true;
+						}
+					}
+					vak--;
+				}
+				rooster[i][j] = -1;
+			}
+		}
+	}
+	return false;
 }  // bepaalRooster
 
 //*************************************************************************
@@ -328,4 +360,3 @@ void Rooster::bepaalRoosterGretig (int rooster[MaxNrTijdsloten][MaxNrZalen])
 	// TODO: implementeer deze functie
 
 }  // bepaalRoosterGretig
-
