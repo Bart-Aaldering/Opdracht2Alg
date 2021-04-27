@@ -17,12 +17,21 @@ const int MaxBestandsNaamLengte = 30; // maximale lengte van een bestandsnaam
 
 //*************************************************************************
 
+//Algemene info programmeurs
+void infoblokje() {
+    cout << "Rooster" << endl
+         << "Geschreven door Bart Aaldering (s2969866)," << endl
+         << "student Informatica (Artificial Intelligence) te Leiden" << endl
+         << "en Lex Janssens (s2989344)," << endl
+         << "student Informatica (Artificial Intelligence) te Leiden" << endl
+         << "Inleverdatum: 7-5-2021 23:59" << endl;
+}//info
+
 // Schrijf het menu voor een instantie op het scherm,
 // en vraag een keuze van de gebruiker.
 // Retourneer: de keuze van de gebruiker
 int keuzeUitMenu ()
-{ 
-	int keuze;
+{ int keuze;
 
 	cout << endl;
 	cout << "1. Een rooster bepalen (backtracking)" << endl;
@@ -44,8 +53,8 @@ int keuzeUitMenu ()
 // Roep vervolgens r1 aan voor het gekozen soort rooster.
 // Herhaal dit totdat de gebruiker aangeeft te willen stoppen.
 void menuVoorInstantie (Rooster *r1)
-{ 
-	int keuze, rooster[MaxNrTijdsloten][MaxNrZalen];
+{ int keuze,
+		rooster[MaxNrTijdsloten][MaxNrZalen];
 	long long aantalDeelroosters;  // aantal deelroosters dat we hebben
 												// opgebouwd
 	clock_t t1, t2;
@@ -98,7 +107,7 @@ void menuVoorInstantie (Rooster *r1)
 //*************************************************************************
 
 void hoofdmenu ()
-{ 
+{
 	Rooster *r1;  // pointer, om makkeijk nieuwe objecten te kunnen maken
 					// en weer weg te gooien
 	int keuze;
@@ -132,6 +141,7 @@ void hoofdmenu ()
 
 int main ()
 {
+	infoblokje();
    hoofdmenu ();
 
 	return 0;
