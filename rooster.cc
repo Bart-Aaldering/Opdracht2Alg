@@ -149,54 +149,66 @@ bool Rooster::bepaalMinRooster (int rooster[MaxNrTijdsloten][MaxNrZalen],
 
 void Rooster::drukAfRooster (int rooster[MaxNrTijdsloten][MaxNrZalen])
 {
-	for (int i = 1; i < nrDagen+1; i++) {
-		cout << " Dag " << i;
+	int vak;
+	for (int i = 1; i < nrZalen+1; i++) {
+		cout << " Zaal " << i;
 		for (int l = 0; l < 26-((i/10)+1); l++) { //compenseer met spaties
 			cout << " ";
 		}
 	}
 	cout << endl;
-	for (int j = 0; j < nrUrenPerDag; j++) {
-		for (int i = 0; i < nrDagen; i++) {
-			cout << "+------------------------------"; //30 streepjes
-		}
-		cout << "+" << endl;
-		for (int k = 0; k < nrDagen; k++) {
-			cout << "| " << vakken[0]->naam; //vak
-			for (int l = 0; l < 29-vakken[0]->naam.length(); l++) { //compenseer met spaties
-				cout << " ";
+	for (int i = 0; i < nrDagen; i++) {
+		for (int j = 0; j < nrUrenPerDag; j++) {
+			for (int k = 0; k < nrZalen; k++) {
+				cout << "+------------------------------"; //30 streepkes
 			}
-		}
+			cout << "+" << endl;
+			for (int k = 0; k < nrZalen; k++) {
+				vak = rooster[i*nrUrenPerDag+j][k];
+				if (vak != -1) {
+					cout << "| " << vakken[vak]->naam; //vak
+					for (int l = 0; l < static_cast<int>(29-vakken[vak]->naam.length()); l++) { //compenseer met spaties
+						cout << " ";
+					}
+				} else {
+					cout << "|                              ";
+				}
+			}
 
-		cout << "| Uur" << endl;
-		for (int k = 0; k < nrDagen; k++) {
-			cout << "| Docent: " << vakken[0]->docent; //docent
-			for (int l = 0; l < 20; l++) { //compenseer met spaties
-				cout << " ";
+			cout << "| Dag " << i + 1 << endl;
+			for (int k = 0; k < nrZalen; k++) {
+				vak = rooster[i*nrUrenPerDag+j][k];
+				if (vak != -1) {
+					cout << "| Docent: " << vakken[vak]->docent; //docent
+					for (int l = 0; l < 20; l++) { //compenseer met spaties
+						cout << " ";
+					}
+				} else {
+					cout << "|                              ";
+				}
 			}
-		}
-		cout << "| " << j + 1 << endl;
-		for (int k = 0; k < nrDagen; k++) {
-			cout << "| Tracks: ";
-			cout << vakken[0]->tracks[0]; //print de eerste alvast, voor de komma's
-			for (int l = 1; l < vakken[0]->nrTracks; l++)
-				cout << ", " << vakken[0]->tracks[l]; //track
-			for (int l = 0; l < 20 - ((vakken[0]->nrTracks-1)*3); l++) { //compenseer met spaties
-				cout << " ";
-			}
-		}
-		cout << "|" << endl;
-		for (int k = 0; k < nrDagen; k++) {
-			cout << "| Zaal: " << nrZalen; //zaal
-			for (int l = 0; l < 22; l++) {
-				cout << " "; //compenseer met spaties
-			}
-		}
-		cout << "|" << endl;
 
+			cout << "| Uur " << j + 1 << endl;
+			for (int k = 0; k < nrZalen; k++) {
+				vak = rooster[i*nrUrenPerDag+j][k];
+				if (vak != -1) {
+					cout << "| Tracks: ";
+					cout << vakken[vak]->tracks[0]; //print de eerste alvast, voor de komma's
+					for (int l = 1; l < vakken[vak]->nrTracks; l++) {
+						cout << ", " << vakken[vak]->tracks[l]; //track
+					}
+					for (int l = 0; l < 20 - ((vakken[vak]->nrTracks-1)*3); l++) { //compenseer met spaties
+						cout << " ";
+					}
+				} else {
+					cout << "|                              ";
+				}
+			}
+			cout << "| " << endl;
+		}
 	}
 
-	for (int i = 0; i < nrDagen; i++) {
+	for (int i = 0; i < nrZalen; i++) {
 		cout << "+------------------------------"; //30 streepjes
 	}
 	cout << "+" << endl;
