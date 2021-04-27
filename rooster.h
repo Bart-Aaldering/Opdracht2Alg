@@ -28,7 +28,7 @@ class Vak
 };
 
 class Rooster
-{ 
+{
 	public:
 
 		// Default constructor
@@ -56,8 +56,8 @@ class Rooster
 								int tijdslot);
 		bool checkdups(vector<int> arr);
 		bool intersect(int arr1[], int s1, int arr2[], int s2);
-		
-		
+
+
 		vector<int> lesDag(int track, int rooster[MaxNrTijdsloten][MaxNrZalen],
 							int tijdslot);
 		bool nulOfTweeVak(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
@@ -66,7 +66,7 @@ class Rooster
 								int tijdslot);
 		bool tussenuur(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 								int tijdslot);
-	
+
 		// Bepaal zo mogelijk een rooster voor de verschillende tracks,
 		// rekening houdend met de beschikbaarheid van de docenten,
 		// en de eisen aan de tracks.
@@ -125,14 +125,16 @@ class Rooster
 		// TODO: uw eigen memberfuncties en -variabelen
 		Docent* docenten[40];
 		Vak* vakken[50];
+		//vector<vector<int>> ttracks = {{},{},{},{},{},{},{},{},{},{}};
 
 		string invoernaam = ""; //naam van de invoerfile
-	
+
 		int nrDagen,       // aantal dagen in het rooster
 			nrUrenPerDag,  // aantal uren per dag
 			nrZalen,       // aantal beschikbare zalen
 			nrDocenten,
 			nrVakken;
+
 		int vakIndex = 0;
 			// Een datastructuur voor de docenten en hun beschikbaarheden.
 			// En een datastructuur voor de vakken, met hun docenten en tracks.
