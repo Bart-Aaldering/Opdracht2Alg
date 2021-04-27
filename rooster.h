@@ -52,7 +52,7 @@ class Rooster
 		void drukAf ();
 		bool checkdups(vector<int> arr);
 		bool intersect(int arr1[], int s1, int arr2[], int s2);
-		bool zoekInArray(int doc, int waarde);
+		bool docentBeschikbaar(int docent, int waarde);
 		bool dupTracks(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 								int tijdslot);
 		vector<int> lesDag(int track, int rooster[MaxNrTijdsloten][MaxNrZalen],
@@ -130,10 +130,9 @@ class Rooster
 			nrZalen,       // aantal beschikbare zalen
 			nrDocenten,
 			nrVakken;
-		int index = 0;
+		int vak = 0;
 			// Een datastructuur voor de docenten en hun beschikbaarheden.
 			// En een datastructuur voor de vakken, met hun docenten en tracks.
 };
 
 #endif
-
