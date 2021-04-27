@@ -50,11 +50,14 @@ class Rooster
 
 		// Druk de informatie van de instantie af op het scherm.
 		void drukAf ();
+
+		bool docentBeschikbaar(int docent, int tijdslot);
+		bool overlapTracks(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
+								int tijdslot);
 		bool checkdups(vector<int> arr);
 		bool intersect(int arr1[], int s1, int arr2[], int s2);
-		bool docentBeschikbaar(int docent, int waarde);
-		bool dupTracks(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
-								int tijdslot);
+		
+		
 		vector<int> lesDag(int track, int rooster[MaxNrTijdsloten][MaxNrZalen],
 							int tijdslot);
 		bool nulOfTweeVak(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
