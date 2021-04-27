@@ -127,7 +127,7 @@ bool Rooster::checkdups(vector<int> arr) {
 		dup.push_back(arr[i]);
 	}
 	return true;
-
+}
 bool Rooster::intersect(int arr1[], int s1, int arr2[], int s2) {
 	int s = 0;
 	for (int i = 0; i < s1; i++) {
