@@ -27,6 +27,12 @@ class Vak
 	private:
 };
 
+class Track
+{
+	public:
+		vector<int> vakken;
+};
+
 class Rooster
 {
 	public:
@@ -60,12 +66,10 @@ class Rooster
 
 		vector<int> lesDag(int track, int rooster[MaxNrTijdsloten][MaxNrZalen],
 							int tijdslot);
-		bool nulOfTweeVak(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
-								int tijdslot);
+		bool nulOfTweeVak(int rooster[MaxNrTijdsloten][MaxNrZalen]);
 		bool lesDocent(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 								int tijdslot);
-		bool tussenuur(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
-								int tijdslot);
+		bool tussenuur(int rooster[MaxNrTijdsloten][MaxNrZalen]);
 
 		// Bepaal zo mogelijk een rooster voor de verschillende tracks,
 		// rekening houdend met de beschikbaarheid van de docenten,
@@ -125,7 +129,8 @@ class Rooster
 		// TODO: uw eigen memberfuncties en -variabelen
 		Docent* docenten[40];
 		Vak* vakken[50];
-		//vector<vector<int>> ttracks = {{},{},{},{},{},{},{},{},{},{}};
+		Track* tracken[10];
+
 
 		string invoernaam = ""; //naam van de invoerfile
 
@@ -133,7 +138,8 @@ class Rooster
 			nrUrenPerDag,  // aantal uren per dag
 			nrZalen,       // aantal beschikbare zalen
 			nrDocenten,
-			nrVakken;
+			nrVakken,
+			nrTracks;
 
 		int vakIndex = 0;
 			// Een datastructuur voor de docenten en hun beschikbaarheden.
