@@ -144,19 +144,17 @@ bool Rooster::checkdups(vector<int> arr)
 
 //*************************************************************************
 
-bool Rooster::intersect(int arr1[], int s1, int arr2[], int s2) {
-	int s = 0;
+vector<int> Rooster::intersect(int arr1[], int s1, int arr2[], int s2) {
+	//returns true if nothing
+	vector<int> s;
 	for (int i = 0; i < s1; i++) {
 		for (int j = 0; j < s2; j++) {
 			if (arr1[i] == arr2[j]) {
-				s++;
+				s.push_back(i);
 			}
 		}
 	}
-	if (s == 0) {
-		return true;
-	}
-	return false;
+	return s;
 }
 
 //*************************************************************************
@@ -181,9 +179,9 @@ bool Rooster::overlapTracks(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 	if (nrZalen > 1) {
 		for (int i = 0; i < nrZalen; i++) {
 			if (rooster[tijdslot][i] != -1) {
-				if (!intersect(vakken[rooster[tijdslot][i]]->tracks,
+				if (intersect(vakken[rooster[tijdslot][i]]->tracks,
 									vakken[rooster[tijdslot][i]]->nrTracks,
-									vak->tracks,vak->nrTracks)) {
+									vak->tracks,vak->nrTracks).size() > 0) {
 					overlap = true;
 				}
 			}
@@ -224,30 +222,24 @@ bool Rooster::nulOfTweeVak(int rooster[MaxNrTijdsloten][MaxNrZalen])
 	bool test = true;
 
 	for (int i = 0; i < nrTracks; i++) {
-		//heeft een track van het vak wat we willen inroosteren al iets op die dag?
 		for (int k = 0; k < nrDagen; k+=nrUrenPerDag) {
+			//heeft een track van het vak wat we willen inroosteren al iets op die dag?
 			lessen = lesDag(i, rooster, k);
 			l = lessen.size();
-			if (l == 1) {
-				if (tracken[i]->vakken.size() == 1) {
+			if (l == 1) { //als er maar 1 les op een dag is, moet daar een reden voor zijn
+				l = tracken[i]->vakken.size();
+				if (l == 1) {//als er maar 1 vak in die track is
 					continue;
 				}
-				else {
-					for (int j = 0; j < tracken[i]->vakken.size()-1; j++) {
-						if (test)
-							test = intersect(docenten[vakken[tracken[i]->vakken[j]]->docent]->beschikbareTijdsloten,
-											docenten[vakken[tracken[i]->vakken[j]]->docent]->nrBeschikbareTijdsloten,
-											docenten[vakken[tracken[i]->vakken[j+1]]->docent]->beschikbareTijdsloten,
-											docenten[vakken[tracken[i]->vakken[j+1]]->docent]->nrBeschikbareTijdsloten);
-					}
-					if (test) {
-						continue;
-					} else {
+				for (int j = 0; j < l-1; j++) {//als alle docenten geen matchende tijden hebben
+					if (test && intersect(docenten[vakken[tracken[i]->vakken[j]]->docent]->beschikbareTijdsloten,
+									docenten[vakken[tracken[i]->vakken[j]]->docent]->nrBeschikbareTijdsloten,
+									docenten[vakken[tracken[i]->vakken[j+1]]->docent]->beschikbareTijdsloten,
+									docenten[vakken[tracken[i]->vakken[j+1]]->docent]->nrBeschikbareTijdsloten).size() > 0) {
 						return false;
 					}
 				}
 			}
-			test = true;
 		}
 		//1 track heeft enkel vakken door docenten met niet-matchende tijdsloten: niet mogelijk op 1 dag
 	}
@@ -273,8 +265,25 @@ bool Rooster::lesDocent(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 }
 
 bool Rooster::tussenuur(int rooster[MaxNrTijdsloten][MaxNrZalen]) {
-	//vector<int> lessen = lesDag(vak->tracks[i], rooster, tijdslot);
-	//hier ben ik bezig...
+	vector<int> lessen;
+	int d = 0;
+	for (int i = 0; i < nrTracks; i++) {
+		//heeft een track van het vak wat we willen inroosteren al iets op die dag?
+		for (int k = 0; k < nrDagen; k+=nrUrenPerDag) {
+			lessen = lesDag(i, rooster, k);
+			if (lessen.size() > 2) {
+				for (int j = 0; j < lessen.size()-1; j++) {
+					cout << lessen[j] << endl;
+					d += lessen[j+1]-lessen[j]-1;
+				}
+				if (d > 1) {
+					return false;
+				}
+				d = 0;
+			}
+		}
+	}
+	return true;
 }
 
 //*************************************************************************
@@ -301,7 +310,8 @@ bool Rooster::bepaalRooster (int rooster[MaxNrTijdsloten][MaxNrZalen],
 				rooster[i][j] = vakIndex;
 				vakIndex++;
 				if (vakIndex == nrVakken) {//testen achteraf:
-					if (nulOfTweeVak(rooster) //0 of 2 vakken als mogelijk
+					if (nulOfTweeVak(rooster) && //0 of 2 vakken als mogelijk
+						tussenuur(rooster) //max 1 tussenuur per dag
 					) {
 						vakIndex = 0;
 						return true;
