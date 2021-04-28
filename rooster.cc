@@ -335,7 +335,13 @@ bool Rooster::bepaalMinRooster (int rooster[MaxNrTijdsloten][MaxNrZalen],
 								long long &aantalDeelroosters)
 {
 	// TODO: implementeer deze memberfunctie
-
+	// Het idee is basically, 
+	// zodra we een rooster vinden, zoeken we wat het laatste uur is.
+	// als dat uur (dus tijdslot) kleiner is dan het huidige tijdslot
+	// wat we hebben gevonden, slaan we dat rooster op
+	// uiteindelijk houden we alleen het kortste rooster over.
+	// zoeken doen we precies hetzelfde, maar in plaats van afsluiten
+	// slaan we m op en zoeken we verder.
 	return true;
 }  // bepaalMinRooster
 
