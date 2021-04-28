@@ -61,7 +61,7 @@ class Rooster
 		bool overlapTracks(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 								int tijdslot);
 		bool checkdups(vector<int> arr);
-		bool intersect(int arr1[], int s1, int arr2[], int s2);
+		vector<int> intersect(int arr1[], int s1, int arr2[], int s2);
 
 
 		vector<int> lesDag(int track, int rooster[MaxNrTijdsloten][MaxNrZalen],
