@@ -10,6 +10,8 @@
 
 using namespace std;
 
+const bool CompactRooster = true;
+
 //*************************************************************************
 
 // Default constructor
@@ -55,6 +57,10 @@ bool Rooster::leesIn (const char* invoerNaam)
 	invoer >> nrVakken;
 	invoer.get();
 
+	for (int i = 0; i < 10; i++) {
+		tracken[i] = new Track;
+	}
+
 	for (int i = 0; i < nrVakken; i++) {
 		vakken[i] = new Vak;
 
@@ -67,9 +73,12 @@ bool Rooster::leesIn (const char* invoerNaam)
 		for(int j = 0; j < vakken[i]->nrTracks; j++) {
 			invoer >> vakken[i]->tracks[j];
 		}
-		//for(int j = 0; j < vakken[i]->nrTracks; j++) {
-		//	ttracks[vakken[i]->tracks[j]].push_back(i); //vakken per track
-		//}
+		for(int j = 0; j < vakken[i]->nrTracks; j++) {
+			tracken[vakken[i]->tracks[j]]->vakken.push_back(static_cast<int>(i)); //vakken per track
+			if (vakken[i]->tracks[j] > nrTracks) { //bepaalt hoeveel tracks er zijn
+				nrTracks = vakken[i]->tracks[j];
+			}
+		}
 		invoer.get();
 	}
 	return true;
@@ -207,32 +216,42 @@ vector<int> Rooster::lesDag(int track, int rooster[MaxNrTijdsloten][MaxNrZalen],
 
 //*************************************************************************
 
-
-bool Rooster::nulOfTweeVak(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
-								int tijdslot)
+//CHECK ACHTERAF
+bool Rooster::nulOfTweeVak(int rooster[MaxNrTijdsloten][MaxNrZalen])
 {
 	vector<int> lessen;
-	vector<int> hulp;
 	int l;
-	// Heeft een track max 1 tussenuur?
-	for (int i = 0; i < vak->nrTracks; i++) {
-		lessen = lesDag(vak->tracks[i], rooster, tijdslot);
-		l = lessen.size();
-		if (l != 1) {
-			return true;
-		}
-		else {
-			//if (ttrack[track].size() > 1)
-			//	hulp = vakken[ttrack[track][0]];
-			//	for (int j = 0; j < ttrack[track].size(); j++) {
-			//		//morgen weer een dag...
-			//	}
+	bool test = true;
 
-				//1 track heeft enkel vakken door docenten met niet-matchende tijdsloten: niet mogelijk op 1 dag
-				//1 track heeft enkel vakken door docenten met matchende tijdsloten: resulteert in geen mogelijk rooster
+	for (int i = 0; i < nrTracks; i++) {
+		//heeft een track van het vak wat we willen inroosteren al iets op die dag?
+		for (int k = 0; k < nrDagen; k+=nrUrenPerDag) {
+			lessen = lesDag(i, rooster, k);
+			l = lessen.size();
+			if (l == 1) {
+				if (tracken[i]->vakken.size() == 1) {
+					continue;
+				}
+				else {
+					for (int j = 0; j < tracken[i]->vakken.size()-1; j++) {
+						if (test)
+							test = intersect(docenten[vakken[tracken[i]->vakken[j]]->docent]->beschikbareTijdsloten,
+											docenten[vakken[tracken[i]->vakken[j]]->docent]->nrBeschikbareTijdsloten,
+											docenten[vakken[tracken[i]->vakken[j+1]]->docent]->beschikbareTijdsloten,
+											docenten[vakken[tracken[i]->vakken[j+1]]->docent]->nrBeschikbareTijdsloten);
+					}
+					if (test) {
+						continue;
+					} else {
+						return false;
+					}
+				}
+			}
+			test = true;
 		}
+		//1 track heeft enkel vakken door docenten met niet-matchende tijdsloten: niet mogelijk op 1 dag
 	}
-	return false;
+	return true;
 }
 
 //*************************************************************************
@@ -253,8 +272,7 @@ bool Rooster::lesDocent(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 	return true;
 }
 
-bool Rooster::tussenuur(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
-								int tijdslot) {
+bool Rooster::tussenuur(int rooster[MaxNrTijdsloten][MaxNrZalen]) {
 	//vector<int> lessen = lesDag(vak->tracks[i], rooster, tijdslot);
 	//hier ben ik bezig...
 }
@@ -277,15 +295,17 @@ bool Rooster::bepaalRooster (int rooster[MaxNrTijdsloten][MaxNrZalen],
 			if (rooster[i][j] == -1 &&
 				docentBeschikbaar(vakken[vakIndex]->docent,i) && // docent kan op dit uur
 				!overlapTracks(vakken[vakIndex],rooster,i) && // leerlingen niet 2 vakken op hetzelfde moment
-				lesDocent(vakken[vakIndex],rooster,i) //&& // maximaal 1 les per dag voor een docent
-				//nulOfTweeVak(vakken[vakIndex],rooster,i) // maximaal 1 tussenuur en niet meer dan 2 uur op een dag
+				lesDocent(vakken[vakIndex],rooster,i) // maximaal 1 les per dag voor een docent
 				) {
 
 				rooster[i][j] = vakIndex;
 				vakIndex++;
-				if (vakIndex == nrVakken) {
-					vakIndex = 0;
-					return true;
+				if (vakIndex == nrVakken) {//testen achteraf:
+					if (nulOfTweeVak(rooster) //0 of 2 vakken als mogelijk
+					) {
+						vakIndex = 0;
+						return true;
+					}
 				} else {
 					if (bepaalRooster(rooster, aantalDeelroosters)) {
 						return true;
@@ -314,6 +334,7 @@ bool Rooster::bepaalMinRooster (int rooster[MaxNrTijdsloten][MaxNrZalen],
 void Rooster::drukAfRooster (int rooster[MaxNrTijdsloten][MaxNrZalen])
 {
 	int vak;
+	bool lesOpDag = false;
 	for (int i = 1; i < nrZalen+1; i++) {
 		cout << " Zaal " << i;
 		for (int l = 0; l < 26-((i/10)+1); l++) { //compenseer met spaties
@@ -323,52 +344,61 @@ void Rooster::drukAfRooster (int rooster[MaxNrTijdsloten][MaxNrZalen])
 	cout << endl;
 	for (int i = 0; i < nrDagen; i++) {
 		for (int j = 0; j < nrUrenPerDag; j++) {
-			for (int k = 0; k < nrZalen; k++) {
-				cout << "+------------------------------"; //30 streepkes
-			}
-			cout << "+" << endl;
-			for (int k = 0; k < nrZalen; k++) {
-				vak = rooster[i*nrUrenPerDag+j][k];
-				if (vak != -1) {
-					cout << "| " << vakken[vak]->naam; //vak
-					for (int l = 0; l < static_cast<int>(29-vakken[vak]->naam.length()); l++) { //compenseer met spaties
-						cout << " ";
-					}
-				} else {
-					cout << "|                              ";
+			lesOpDag = false;
+			if (CompactRooster) {
+				for (int k = 0; k < nrZalen; k++) {
+					if (rooster[(i*nrUrenPerDag) + j][k] != -1)
+						lesOpDag = true;
 				}
 			}
+			if (CompactRooster && lesOpDag) {
+				for (int k = 0; k < nrZalen; k++) {
+					cout << "+------------------------------"; //30 streepkes
+				}
+				cout << "+" << endl;
+				for (int k = 0; k < nrZalen; k++) {
+					vak = rooster[i*nrUrenPerDag+j][k];
+					if (vak != -1) {
+						cout << "| " << vakken[vak]->naam; //vak
+						for (int l = 0; l < static_cast<int>(29-vakken[vak]->naam.length()); l++) { //compenseer met spaties
+							cout << " ";
+						}
+					} else {
+						cout << "|                              ";
+					}
+				}
 
-			cout << "| Dag " << i + 1 << endl;
-			for (int k = 0; k < nrZalen; k++) {
-				vak = rooster[i*nrUrenPerDag+j][k];
-				if (vak != -1) {
-					cout << "| Docent: " << vakken[vak]->docent; //docent
-					for (int l = 0; l < 20; l++) { //compenseer met spaties
-						cout << " ";
+				cout << "| Dag " << i + 1 << endl;
+				for (int k = 0; k < nrZalen; k++) {
+					vak = rooster[i*nrUrenPerDag+j][k];
+					if (vak != -1) {
+						cout << "| Docent: " << vakken[vak]->docent; //docent
+						for (int l = 0; l < 20; l++) { //compenseer met spaties
+							cout << " ";
+						}
+					} else {
+						cout << "|                              ";
 					}
-				} else {
-					cout << "|                              ";
 				}
-			}
 
-			cout << "| Uur " << j + 1 << endl;
-			for (int k = 0; k < nrZalen; k++) {
-				vak = rooster[i*nrUrenPerDag+j][k];
-				if (vak != -1) {
-					cout << "| Tracks: ";
-					cout << vakken[vak]->tracks[0]; //print de eerste alvast, voor de komma's
-					for (int l = 1; l < vakken[vak]->nrTracks; l++) {
-						cout << ", " << vakken[vak]->tracks[l]; //track
+				cout << "| Uur " << j + 1 << endl;
+				for (int k = 0; k < nrZalen; k++) {
+					vak = rooster[i*nrUrenPerDag+j][k];
+					if (vak != -1) {
+						cout << "| Tracks: ";
+						cout << vakken[vak]->tracks[0]; //print de eerste alvast, voor de komma's
+						for (int l = 1; l < vakken[vak]->nrTracks; l++) {
+							cout << ", " << vakken[vak]->tracks[l]; //track
+						}
+						for (int l = 0; l < 20 - ((vakken[vak]->nrTracks-1)*3); l++) { //compenseer met spaties
+							cout << " ";
+						}
+					} else {
+						cout << "|                              ";
 					}
-					for (int l = 0; l < 20 - ((vakken[vak]->nrTracks-1)*3); l++) { //compenseer met spaties
-						cout << " ";
-					}
-				} else {
-					cout << "|                              ";
 				}
+				cout << "| " << endl;
 			}
-			cout << "| " << endl;
 		}
 	}
 
