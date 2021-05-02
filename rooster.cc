@@ -145,7 +145,7 @@ bool Rooster::checkdups(vector<int> arr)
 //*************************************************************************
 
 vector<int> Rooster::intersect(int arr1[], int s1, int arr2[], int s2) {
-	//returns true if nothing
+	// returns true if nothing intersects
 	vector<int> s;
 	for (int i = 0; i < s1; i++) {
 		for (int j = 0; j < s2; j++) {
@@ -174,20 +174,19 @@ bool Rooster::docentBeschikbaar(int docent, int tijdslot) {
 // Hebben leerlingen van dezelfde track 2 vakken op hetzelfde moment?
 bool Rooster::overlapTracks(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 								int tijdslot) {
-	//Hebben leerlingen niet 2 vakken op hetzelfde moment?
-	bool overlap = false;
+	// Hebben leerlingen niet 2 vakken op hetzelfde moment?
 	if (nrZalen > 1) {
 		for (int i = 0; i < nrZalen; i++) {
 			if (rooster[tijdslot][i] != -1) {
 				if (intersect(vakken[rooster[tijdslot][i]]->tracks,
 									vakken[rooster[tijdslot][i]]->nrTracks,
 									vak->tracks,vak->nrTracks).size() > 0) {
-					overlap = true;
+					return true;
 				}
 			}
 		}
 	}
-	return overlap;
+	return false;
 }
 
 //*************************************************************************
@@ -223,12 +222,12 @@ bool Rooster::nulOfTweeVak(int rooster[MaxNrTijdsloten][MaxNrZalen])
 
 	for (int i = 0; i < nrTracks; i++) {
 		for (int k = 0; k < nrDagen; k+=nrUrenPerDag) {
-			//heeft een track van het vak wat we willen inroosteren al iets op die dag?
+			// heeft een track van het vak wat we willen inroosteren al iets op die dag?
 			lessen = lesDag(i, rooster, k);
 			l = lessen.size();
-			if (l == 1) { //als er maar 1 les op een dag is, moet daar een reden voor zijn
+			if (l == 1) { // als er maar 1 les op een dag is, moet daar een reden voor zijn
 				l = tracken[i]->vakken.size();
-				if (l == 1) {//als er maar 1 vak in die track is
+				if (l == 1) {// als er maar 1 vak in die track is
 					continue;
 				}
 				for (int j = 0; j < l-1; j++) {//als alle docenten geen matchende tijden hebben
@@ -241,7 +240,7 @@ bool Rooster::nulOfTweeVak(int rooster[MaxNrTijdsloten][MaxNrZalen])
 				}
 			}
 		}
-		//1 track heeft enkel vakken door docenten met niet-matchende tijdsloten: niet mogelijk op 1 dag
+		// 1 track heeft enkel vakken door docenten met niet-matchende tijdsloten: niet mogelijk op 1 dag
 	}
 	return true;
 }
@@ -252,7 +251,7 @@ bool Rooster::nulOfTweeVak(int rooster[MaxNrTijdsloten][MaxNrZalen])
 bool Rooster::lesDocent(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 								int tijdslot)
 {
-	//Heeft een docent maximaal 1 vak op een dag
+	// Heeft een docent maximaal 1 vak op een dag
 	int dag = tijdslot/nrUrenPerDag;
 	for (int i = dag*nrUrenPerDag; i < (dag+1)*nrUrenPerDag; i++) {
 		for (int j = 0; j < nrZalen; j++) {
@@ -264,16 +263,16 @@ bool Rooster::lesDocent(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 	return true;
 }
 
-bool Rooster::tussenuur(int rooster[MaxNrTijdsloten][MaxNrZalen]) {
+bool Rooster::tussenuur(int rooster[MaxNrTijdsloten][MaxNrZalen])
+{
 	vector<int> lessen;
 	int d = 0;
 	for (int i = 0; i < nrTracks; i++) {
-		//heeft een track van het vak wat we willen inroosteren al iets op die dag?
+		// heeft een track van het vak wat we willen inroosteren al iets op die dag?
 		for (int k = 0; k < nrDagen; k+=nrUrenPerDag) {
 			lessen = lesDag(i, rooster, k);
 			if (lessen.size() > 2) {
-				for (int j = 0; j < lessen.size()-1; j++) {
-					cout << lessen[j] << endl;
+				for (int j = 0; j < static_cast<int>(lessen.size())-1; j++) {
 					d += lessen[j+1]-lessen[j]-1;
 				}
 				if (d > 1) {
@@ -288,15 +287,22 @@ bool Rooster::tussenuur(int rooster[MaxNrTijdsloten][MaxNrZalen]) {
 
 //*************************************************************************
 
-bool Rooster::bepaalRooster (int rooster[MaxNrTijdsloten][MaxNrZalen],
+void Rooster::maakRoosterLeeg(int rooster[MaxNrTijdsloten][MaxNrZalen])
+{
+	for (int i = 0; i < MaxNrTijdsloten; i++) {
+		for (int j = 0; j < MaxNrZalen; j++) {
+			rooster[i][j] = -1;
+		}
+	}
+}
+
+//*************************************************************************
+
+bool Rooster::bepaalRooster(int rooster[MaxNrTijdsloten][MaxNrZalen],
 						long long &aantalDeelroosters)
 {
 	if (!aantalDeelroosters) {
-		for (int i = 0; i < MaxNrTijdsloten; i++) {
-			for (int j = 0; j < MaxNrZalen; j++) {
-				rooster[i][j] = -1;
-			}
-		}
+		maakRoosterLeeg(rooster);
 	}
 	for (int i = 0; i < nrDagen*nrUrenPerDag; i++) {
 		for (int j = 0; j < nrZalen; j++) {
@@ -309,9 +315,9 @@ bool Rooster::bepaalRooster (int rooster[MaxNrTijdsloten][MaxNrZalen],
 
 				rooster[i][j] = vakIndex;
 				vakIndex++;
-				if (vakIndex == nrVakken) {//testen achteraf:
-					if (nulOfTweeVak(rooster) && //0 of 2 vakken als mogelijk
-						tussenuur(rooster) //max 1 tussenuur per dag
+				if (vakIndex == nrVakken) { // testen achteraf:
+					if (nulOfTweeVak(rooster) && // 0 of 2 vakken als mogelijk
+						tussenuur(rooster) // max 1 tussenuur per dag
 					) {
 						vakIndex = 0;
 						return true;
@@ -389,8 +395,14 @@ void Rooster::drukAfRooster (int rooster[MaxNrTijdsloten][MaxNrZalen])
 					vak = rooster[i*nrUrenPerDag+j][k];
 					if (vak != -1) {
 						cout << "| Docent: " << vakken[vak]->docent; //docent
-						for (int l = 0; l < 20; l++) { //compenseer met spaties
-							cout << " ";
+						if (vakken[vak]->docent >= 10) {
+							for (int l = 0; l < 19; l++) { //compenseer met spaties
+								cout << " ";
+							}
+						} else {
+							for (int l = 0; l < 20; l++) { //compenseer met spaties
+								cout << " ";
+							}
 						}
 					} else {
 						cout << "|                              ";
@@ -426,8 +438,53 @@ void Rooster::drukAfRooster (int rooster[MaxNrTijdsloten][MaxNrZalen])
 
 //*************************************************************************
 
+
+int Rooster::bepaalScore(int nrVak, int tijdslot, int zaal, int rooster[MaxNrTijdsloten][MaxNrZalen]) 
+{
+	int score = -tijdslot;
+	if (docentBeschikbaar(vakken[nrVak]->docent, tijdslot)) {
+		score += 100;
+	}
+	if (!overlapTracks(vakken[nrVak], rooster, tijdslot)) {
+		score += 100;
+	}
+	if (lesDocent(vakken[nrVak], rooster, tijdslot)) {
+		score += 100;
+	}
+	rooster[tijdslot][zaal] = nrVak;
+	if (tussenuur(rooster)) {
+		score += 100;
+	}
+	if (tussenuur(rooster)) {
+		score += 100;
+	}
+	rooster[tijdslot][zaal] = -1;
+	return score;
+}
+//*************************************************************************
+
 void Rooster::bepaalRoosterGretig (int rooster[MaxNrTijdsloten][MaxNrZalen])
 {
-	// TODO: implementeer deze functie
+	int score, besteScore, besteTijdslot, besteZaal;
+	int gemiddeldeScore = 0;
+	maakRoosterLeeg(rooster);
 
+	for (int i = 0; i < nrVakken; i++) {
+		besteScore = 0;
+		for (int j = 0; j < nrDagen*nrUrenPerDag; j++) {
+			for (int k = 0; k < nrZalen; k++) {
+				if (rooster[j][k] == -1) {
+					score = bepaalScore(i, j, k, rooster);
+					if (score > besteScore) {
+						besteScore = score;
+						besteTijdslot = j;
+						besteZaal = k;
+					}
+				}
+			}
+		}
+		rooster[besteTijdslot][besteZaal] = i;
+		gemiddeldeScore += besteScore;
+	}
+	cout << "de gemiddelde score was: " << gemiddeldeScore / nrVakken << endl;
 }  // bepaalRoosterGretig
