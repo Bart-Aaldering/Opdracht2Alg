@@ -104,7 +104,7 @@ class Rooster
 		//   - -1 als er geen vak op tijdslot s en zaal z is ingeroosterd
 		// * aantalDeelroosters is gelijk aan het aantal deelroosters dat we
 		//   hebben gezien bij het bepalen van een rooster
-		bool bepaalMinRooster (int rooster[MaxNrTijdsloten][MaxNrZalen],
+		bool bepaalMinRooster(int rooster[MaxNrTijdsloten][MaxNrZalen],
 										long long &aantalDeelroosters);
 
 		// Druk parameter rooster overzichtelijk af op het scherm
@@ -112,7 +112,12 @@ class Rooster
 		// Pre:
 		// * er is al een instantie ingelezen, en parameter rooster
 		//   bevat een rooster voor die instantie
-		void drukAfRooster (int rooster[MaxNrTijdsloten][MaxNrZalen]);
+		void drukAfRooster(int rooster[MaxNrTijdsloten][MaxNrZalen]);
+
+
+		// berekent de score van een potentiele inroostering
+		int bepaalScore(int nrVak, int tijdslot, int zaal, 
+								int rooster[MaxNrTijdsloten][MaxNrZalen]);
 
 		// Bepaal op een gretige manier een rooster voor de ingelezen vakken,
 		// docenten en tracks. Als het niet lukt om aan alle eisen voor een
@@ -144,6 +149,8 @@ class Rooster
 		int vakIndex = 0;
 			// Een datastructuur voor de docenten en hun beschikbaarheden.
 			// En een datastructuur voor de vakken, met hun docenten en tracks.
+
+		void maakRoosterLeeg(int rooster[MaxNrTijdsloten][MaxNrZalen]);
 };
 
 #endif
