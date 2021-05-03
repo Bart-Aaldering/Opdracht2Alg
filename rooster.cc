@@ -196,7 +196,7 @@ vector<int> Rooster::lesDag(int track, int rooster[MaxNrTijdsloten][MaxNrZalen],
 							int tijdslot)
 {
 	vector<int> tijden;
-	int dag = tijdslot/nrDagen;
+	int dag = tijdslot/nrUrenPerDag;
 	for (int i = dag*nrUrenPerDag; i < (dag+1)*nrUrenPerDag; i++) {
 		for (int j = 0; j < nrZalen; j++) {
 			if (rooster[i][j] != -1) {
@@ -269,9 +269,9 @@ bool Rooster::tussenuur(int rooster[MaxNrTijdsloten][MaxNrZalen])
 	int d = 0;
 	for (int i = 0; i < nrTracks; i++) {
 		// heeft een track van het vak wat we willen inroosteren al iets op die dag?
-		for (int k = 0; k < nrDagen; k+=nrUrenPerDag) {
+		for (int k = 0; k < nrDagen*nrUrenPerDag; k+=nrUrenPerDag) {
 			lessen = lesDag(i, rooster, k);
-			if (lessen.size() > 2) {
+			if (lessen.size() >= 2) {
 				for (int j = 0; j < static_cast<int>(lessen.size())-1; j++) {
 					d += lessen[j+1]-lessen[j]-1;
 				}
@@ -341,7 +341,7 @@ bool Rooster::bepaalMinRooster (int rooster[MaxNrTijdsloten][MaxNrZalen],
 								long long &aantalDeelroosters)
 {
 	// TODO: implementeer deze memberfunctie
-	// Het idee is basically, 
+	// Het idee is basically,
 	// zodra we een rooster vinden, zoeken we wat het laatste uur is.
 	// als dat uur (dus tijdslot) kleiner is dan het huidige tijdslot
 	// wat we hebben gevonden, slaan we dat rooster op
@@ -439,7 +439,7 @@ void Rooster::drukAfRooster (int rooster[MaxNrTijdsloten][MaxNrZalen])
 //*************************************************************************
 
 
-int Rooster::bepaalScore(int nrVak, int tijdslot, int zaal, int rooster[MaxNrTijdsloten][MaxNrZalen]) 
+int Rooster::bepaalScore(int nrVak, int tijdslot, int zaal, int rooster[MaxNrTijdsloten][MaxNrZalen])
 {
 	int score = -tijdslot;
 	if (docentBeschikbaar(vakken[nrVak]->docent, tijdslot)) {
