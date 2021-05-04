@@ -136,6 +136,7 @@ class Rooster
 		Vak* vakken[50];
 		Track* tracken[10];
 
+		int manipRooster[MaxNrTijdsloten][MaxNrZalen];
 
 		string invoernaam = ""; //naam van de invoerfile
 
@@ -147,10 +148,16 @@ class Rooster
 			nrTracks;
 
 		int vakIndex = 0;
+		int maxTijdslot;
+
 			// Een datastructuur voor de docenten en hun beschikbaarheden.
 			// En een datastructuur voor de vakken, met hun docenten en tracks.
 
+		// zet overal in de 2d array -1
 		void maakRoosterLeeg(int rooster[MaxNrTijdsloten][MaxNrZalen]);
+
+		// returnt het laatste tijdslot waarop dit rooster les heeft
+		int bepaalMaxTijdslot(int rooster[MaxNrTijdsloten][MaxNrZalen]);
 };
 
 #endif
