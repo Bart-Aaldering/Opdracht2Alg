@@ -5,7 +5,6 @@
 #include "standaard.h"
 #include "rooster.h"
 #include <cstring>
-#include <cmath>
 #include <vector>
 
 using namespace std;
@@ -173,7 +172,8 @@ bool Rooster::docentBeschikbaar(int docent, int tijdslot) {
 
 // Hebben leerlingen van dezelfde track 2 vakken op hetzelfde moment?
 bool Rooster::overlapTracks(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
-								int tijdslot) {
+								int tijdslot) 
+{
 	// Hebben leerlingen niet 2 vakken op hetzelfde moment?
 	if (nrZalen > 1) {
 		for (int i = 0; i < nrZalen; i++) {
@@ -337,7 +337,19 @@ bool Rooster::bepaalRooster(int rooster[MaxNrTijdsloten][MaxNrZalen],
 
 //*************************************************************************
 
-bool Rooster::bepaalMinRooster (int rooster[MaxNrTijdsloten][MaxNrZalen],
+int Rooster::bepaalMaxTijdslot(int rooster[MaxNrTijdsloten][MaxNrZalen]) {
+
+	for (int i = nrDagen*nrUrenPerDag; i-- > 0;) {
+		for (int j = nrZalen; j-- > 0;) {
+			if (rooster[i][j] != -1) {
+				return i;
+			}
+		}
+	}
+	return 0;
+}
+
+bool Rooster::bepaalMinRooster(int rooster[MaxNrTijdsloten][MaxNrZalen],
 								long long &aantalDeelroosters)
 {
 	// TODO: implementeer deze memberfunctie
@@ -348,7 +360,52 @@ bool Rooster::bepaalMinRooster (int rooster[MaxNrTijdsloten][MaxNrZalen],
 	// uiteindelijk houden we alleen het kortste rooster over.
 	// zoeken doen we precies hetzelfde, maar in plaats van afsluiten
 	// slaan we m op en zoeken we verder.
-	return true;
+	int tijdslot;
+	bool geldigRooster = false;
+
+	if (!aantalDeelroosters) {
+		maakRoosterLeeg(manipRooster);
+		maakRoosterLeeg(rooster);
+		maxTijdslot = MaxNrTijdsloten+1;
+	}
+	for (int i = 0; i < nrDagen*nrUrenPerDag; i++) {
+		for (int j = 0; j < nrZalen; j++) {
+			aantalDeelroosters++;
+			if (manipRooster[i][j] == -1 &&
+				docentBeschikbaar(vakken[vakIndex]->docent,i) && // docent kan op dit uur
+				!overlapTracks(vakken[vakIndex],manipRooster,i) && // leerlingen niet 2 vakken op hetzelfde moment
+				lesDocent(vakken[vakIndex],manipRooster,i) // maximaal 1 les per dag voor een docent
+				) {
+				manipRooster[i][j] = vakIndex;
+				vakIndex++;
+				if (vakIndex == nrVakken) { // testen achteraf:;
+					if (nulOfTweeVak(manipRooster) && // 0 of 2 vakken als mogelijk
+						tussenuur(manipRooster)) // max 1 tussenuur per dag
+						{
+						tijdslot = bepaalMaxTijdslot(manipRooster);
+						if (tijdslot < maxTijdslot) {
+							geldigRooster = true;
+							maxTijdslot = tijdslot;
+
+							for (int k = 0; k < nrDagen*nrUrenPerDag; k++) {
+								for (int l = 0; l < nrZalen; l++) {
+									rooster[k][l] = manipRooster[k][l];
+								}
+							}
+
+						}
+					}
+				} else {
+					if (bepaalMinRooster(rooster, aantalDeelroosters)) {
+						geldigRooster = true;
+					}
+				}
+				manipRooster[i][j] = -1;
+				vakIndex--;
+			}
+		}
+	}
+	return geldigRooster;
 }  // bepaalMinRooster
 
 //*************************************************************************
@@ -443,16 +500,16 @@ int Rooster::bepaalScore(int nrVak, int tijdslot, int zaal, int rooster[MaxNrTij
 {
 	int score = -tijdslot;
 	if (docentBeschikbaar(vakken[nrVak]->docent, tijdslot)) {
-		score += 100;
+		score += 200;
 	}
 	if (!overlapTracks(vakken[nrVak], rooster, tijdslot)) {
-		score += 100;
+		score += 200;
 	}
 	if (lesDocent(vakken[nrVak], rooster, tijdslot)) {
-		score += 100;
+		score += 200;
 	}
 	rooster[tijdslot][zaal] = nrVak;
-	if (tussenuur(rooster)) {
+	if (nulOfTweeVak(rooster)) {
 		score += 100;
 	}
 	if (tussenuur(rooster)) {
@@ -466,7 +523,7 @@ int Rooster::bepaalScore(int nrVak, int tijdslot, int zaal, int rooster[MaxNrTij
 void Rooster::bepaalRoosterGretig (int rooster[MaxNrTijdsloten][MaxNrZalen])
 {
 	int score, besteScore, besteTijdslot, besteZaal;
-	int gemiddeldeScore = 0;
+	
 	maakRoosterLeeg(rooster);
 
 	for (int i = 0; i < nrVakken; i++) {
@@ -484,7 +541,5 @@ void Rooster::bepaalRoosterGretig (int rooster[MaxNrTijdsloten][MaxNrZalen])
 			}
 		}
 		rooster[besteTijdslot][besteZaal] = i;
-		gemiddeldeScore += besteScore;
 	}
-	cout << "de gemiddelde score was: " << gemiddeldeScore / nrVakken << endl;
 }  // bepaalRoosterGretig
