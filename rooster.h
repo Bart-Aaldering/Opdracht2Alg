@@ -21,8 +21,8 @@ class Docent
 {
 	//Object Docent
 	public:
-		int nrBeschikbareTijdsloten;		// Aantal beschikbare tijdsloten
-		int beschikbareTijdsloten[50];	// Array van tijdsloten
+		int nrTijdsloten;		// Aantal beschikbare tijdsloten
+		int tijdsloten[50];	// Array van tijdsloten
 	private:
 }; //Docent
 
@@ -30,10 +30,10 @@ class Vak
 {
 	// Object Vak
 	public:
-		string naam = "";						// Naam van het vak
-		int docent;								// Nummer van die docent
-		int nrTracks;							// Aantal tracks die dit vak hebben
-		int tracks[10];						// Array van die tracks
+		string naam = "";	// Naam van het vak
+		int docent;			// Nummer van die docent
+		int nrTracks;		// Aantal tracks die dit vak hebben
+		int tracks[10];		// Array van die tracks
 	private:
 }; // Vak
 
@@ -47,9 +47,9 @@ class Track
 class Rooster
 {
 	public:
-
 		// Default constructor
 		Rooster ();
+
 		// Lees een instantie in uit invoernaam.
 		// Controleer daarbij of het bestand wel te openen is.
 		// Pre:
@@ -67,46 +67,6 @@ class Rooster
 
 		// Druk de informatie van de instantie af op het scherm.
 		void drukAf ();
-
-		// Checkt of een docent beschikbaar is op gegeven tijdslot
-		// en returned een bool respectievelijk.
-		bool docentBeschikbaar(int docent, int tijdslot);
-
-		// Checkt of er niet twee vakken op hetzelfde moment worden gegeven
-		// en returned een bool respectievelijk.
-		bool overlapTracks(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
-								int tijdslot);
-
-		// Checkt in gegeven vector voor dubbele instanties
-		// en returned een bool respectievelijk.
-		bool checkdups(vector<int> arr);
-
-		// Geeft de intersectie van twee arrays terug als vector
-		vector<int> intersect(int arr1[], int s1, int arr2[], int s2);
-
-		// Checkt of alle docenten geen matchende tijden hebben met een
-		// andere docent *per dag*. Deze intersectie is speciaal gericht
-		// naar deze eis.
-		bool specialIntersect(int arr1[], int s1, int arr2[], int s2);
-
-		// Geeft alle lessen op een gegeven dag van een gegeven track terug
-		// als vector.
-		vector<int> lesDag(int track, int rooster[MaxNrTijdsloten][MaxNrZalen],
-							int tijdslot);
-
-		// Checkt hoeveel vakken een track heeft op een dag. Als dat één is,
-		// moet daar een reden voor zijn. Deze worden eveneens hier getest.
-		// Het returned of het rooster in dat opzichte valide is.
-		bool nulOfTweeVak(int rooster[MaxNrTijdsloten][MaxNrZalen]);
-
-		// Checkt of een docent maximaal één les geeft op een dag,
-		// en returned een bool respectievelijk.
-		bool lesDocent(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
-								int tijdslot);
-
-		// Checkt of een track maximaal 1 tussenuur heeft op een dag
-		// en returned een bool respectievelijk.
-		bool tussenuur(int rooster[MaxNrTijdsloten][MaxNrZalen]);
 
 		// Bepaal zo mogelijk een rooster voor de verschillende tracks,
 		// rekening houdend met de beschikbaarheid van de docenten,
@@ -151,11 +111,6 @@ class Rooster
 		//   bevat een rooster voor die instantie
 		void drukAfRooster(int rooster[MaxNrTijdsloten][MaxNrZalen]);
 
-
-		// berekent de score van een potentiele inroostering
-		int bepaalScore(int nrVak, int tijdslot, int zaal,
-								int rooster[MaxNrTijdsloten][MaxNrZalen]);
-
 		// Bepaal op een gretige manier een rooster voor de ingelezen vakken,
 		// docenten en tracks. Als het niet lukt om aan alle eisen voor een
 		// geldig rooster te voldoen, probeer er dan `zo goed mogelijk' aan
@@ -167,6 +122,7 @@ class Rooster
 		// Post:
 		// * rooster bevat een rooster voor alle ingelezen vakken.
 		void bepaalRoosterGretig (int rooster[MaxNrTijdsloten][MaxNrZalen]);
+
 	private:
 		Docent* docenten[40];	//Array van klassen van docenten (max 40)
 		Vak* vakken[50];			//Array van klassen van vakken (max 50)
@@ -190,11 +146,55 @@ class Rooster
 		// Geeft het laatste tijdslot aan in een minimaal rooster.
 		int maxTijdslot;
 
+				// Checkt of een docent beschikbaar is op gegeven tijdslot
+		// en returned een bool respectievelijk.
+		bool docentBeschikbaar(int docent, int tijdslot);
+
+		// Checkt of er niet twee vakken op hetzelfde moment worden gegeven
+		// en returned een bool respectievelijk.
+		bool overlapTracks(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
+								int tijdslot);
+
+		// Checkt in gegeven vector voor dubbele instanties
+		// en returned een bool respectievelijk.
+		bool checkdups(vector<int> arr);
+
+		// Geeft de intersectie van twee arrays terug als vector
+		vector<int> intersect(int arr1[], int s1, int arr2[], int s2);
+
+		// Checkt of alle docenten geen matchende tijden hebben met een
+		// andere docent *per dag*. Deze intersectie is speciaal gericht
+		// naar deze eis.
+		bool specialIntersect(int arr1[], int s1, int arr2[], int s2);
+
+		// Geeft alle lessen op een gegeven dag van een gegeven track terug
+		// als vector.
+		vector<int> lesDag(int track, int rooster[MaxNrTijdsloten][MaxNrZalen],
+							int tijdslot);
+
+		// Checkt hoeveel vakken een track heeft op een dag. Als dat één is,
+		// moet daar een reden voor zijn. Deze worden eveneens hier getest.
+		// Het returned of het rooster in dat opzichte valide is.
+		bool nulOfTweeVak(int rooster[MaxNrTijdsloten][MaxNrZalen]);
+
 		// Zet overal in de 2d array -1
 		void maakRoosterLeeg(int rooster[MaxNrTijdsloten][MaxNrZalen]);
 
 		// Returned het laatste tijdslot waarop dit rooster les heeft.
 		int bepaalMaxTijdslot(int rooster[MaxNrTijdsloten][MaxNrZalen]);
+
+		// berekent de score van een potentiele inroostering
+		int bepaalScore(int nrVak, int tijdslot, int zaal,
+								int rooster[MaxNrTijdsloten][MaxNrZalen]);
+
+		// Checkt of een docent maximaal één les geeft op een dag,
+		// en returned een bool respectievelijk.
+		bool lesDocent(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
+								int tijdslot);
+
+		// Checkt of een track maximaal 1 tussenuur heeft op een dag
+		// en returned een bool respectievelijk.
+		bool tussenuur(int rooster[MaxNrTijdsloten][MaxNrZalen]);
 }; //Rooster
 
 #endif
