@@ -1,4 +1,12 @@
 // Definitie van klasse Rooster
+// rooster.h
+// Geschreven door : Bart Aaldering (s2969866) en Lex Janssens (s2989344)
+// Compiler: GNU GCC Compiler
+// Beschrijving:
+/*
+	Hierin staan functies, variabelen en klassen
+	gedeclareerd die gebruikt worden in rooster.cc.
+*/
 
 #ifndef RoosterHVar  // voorkom dat dit bestand meerdere keren
 #define RoosterHVar  // ge-include wordt
