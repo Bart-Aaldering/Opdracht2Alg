@@ -5,7 +5,7 @@
 // * een instantie van Rooster in te lezen, en daarvoor roosters te maken.
 //   (een geldig rooster, een zo kort mogelijk rooster, een gretig rooster)
 //
-// Naam student 1, naam student 2
+// Naam Bart Aaldering s2969866, Lex Jansens s2989344
 
 #include <iostream>
 #include <ctime>  // voor clock() en clock_t
@@ -94,8 +94,9 @@ void menuVoorInstantie (Rooster *r1)
 					cout << endl;
 					cout << "We hebben hiervoor " << aantalDeelroosters
 							<< " deelroosters opgebouwd." << endl;
-					cout << "Dit kostte " << (t2-t1) << " clock ticks, ofwel "
-						<< (((double)(t2-t1))/CLOCKS_PER_SEC) << " seconden." << endl;
+					cout << "Dit kostte " << (t2-t1) << " clock ticks, ofwel ";
+					cout << (((double)(t2-t1))/CLOCKS_PER_SEC);
+					cout << " seconden." << endl;
 					break;
 			case 3: cout << endl;
 					cout << "bepaalRoosterGretig" << endl;
@@ -146,7 +147,8 @@ void hoofdmenu ()
 
 int main ()
 {
-   hoofdmenu ();
+	infoblokje();
+	hoofdmenu ();
 
-	return 0;
+		return 0;		
 }
