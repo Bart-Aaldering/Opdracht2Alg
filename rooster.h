@@ -62,7 +62,7 @@ class Rooster
 								int tijdslot);
 		bool checkdups(vector<int> arr);
 		vector<int> intersect(int arr1[], int s1, int arr2[], int s2);
-
+		bool specialIntersect(int arr1[], int s1, int arr2[], int s2);
 
 		vector<int> lesDag(int track, int rooster[MaxNrTijdsloten][MaxNrZalen],
 							int tijdslot);
@@ -116,7 +116,7 @@ class Rooster
 
 
 		// berekent de score van een potentiele inroostering
-		int bepaalScore(int nrVak, int tijdslot, int zaal, 
+		int bepaalScore(int nrVak, int tijdslot, int zaal,
 								int rooster[MaxNrTijdsloten][MaxNrZalen]);
 
 		// Bepaal op een gretige manier een rooster voor de ingelezen vakken,
