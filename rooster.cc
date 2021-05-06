@@ -16,6 +16,8 @@
 #include <cstring>
 #include <vector>
 
+#include <ctime>
+
 using namespace std;
 
 
@@ -87,10 +89,10 @@ bool Rooster::leesIn (const char* invoerNaam)
 
 			// Vakken per track:
 			tracken[vakken[i]->tracks[j]]->vakken.push_back(static_cast<int>(i));
-			if (vakken[i]->tracks[j] > nrTracks) {
+			if (vakken[i]->tracks[j] >= nrTracks) {
 
 				// Bepaalt hoeveel tracks er zijn
-				nrTracks = vakken[i]->tracks[j];
+				nrTracks = vakken[i]->tracks[j]+1;
 			}
 		}
 		invoer.get();
@@ -202,7 +204,7 @@ bool Rooster::docentBeschikbaar(int docent, int tijdslot)
 bool Rooster::overlapTracks(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 								int tijdslot)
 {
-	if (nrZalen > 1) { //Als er maar 1 zaal is, is het sowieso niet mogelijk
+	if (nrZalen > 1) { // Als er maar 1 zaal is, is het sowieso niet mogelijk
 		for (int i = 0; i < nrZalen; i++) {
 			if (rooster[tijdslot][i] != -1) {
 				// Op een uur moet de intersectie 0 items bevatten,
@@ -221,19 +223,18 @@ bool Rooster::overlapTracks(Vak* vak, int rooster[MaxNrTijdsloten][MaxNrZalen],
 
 //*************************************************************************
 
-// Returned lessen van een track op een bepaalde uur op de dag
+// Returned tijdslot en zaalnummer van alle lessen van een track op een een dag
 vector<int> Rooster::lesDag(int track, int rooster[MaxNrTijdsloten][MaxNrZalen],
 							int tijdslot)
 {
 	vector<int> tijden;	// Lijst met tijden van de lessen
-	int dag = tijdslot/nrUrenPerDag;	// Vind de hele dag van tijdslot
-	for (int i = dag*nrUrenPerDag; i < (dag+1)*nrUrenPerDag; i++) {
+	for (int i = tijdslot; i < tijdslot+nrUrenPerDag; i++) {
 		for (int j = 0; j < nrZalen; j++) {
 			if (rooster[i][j] != -1) {
 				for (int k = 0; k < vakken[rooster[i][j]]->nrTracks; k++) {
 					if (vakken[rooster[i][j]]->tracks[k] == track) {
-						tijden.push_back(i);	//Pushed vaknummer
-						tijden.push_back(j); //Pushed zaalnummer
+						tijden.push_back(i);	// Pushed tijdslot
+						tijden.push_back(j); // Pushed zaalnummer
 					}
 				}
 			}
@@ -245,7 +246,9 @@ vector<int> Rooster::lesDag(int track, int rooster[MaxNrTijdsloten][MaxNrZalen],
 //*************************************************************************
 
 // returns true if nothing intersects
-bool Rooster::specialIntersect(int arr1[], int s1, int arr2[], int s2) {
+bool Rooster::specialIntersect(int arr1[], int s1, int arr2[], int s2)
+{
+
 	for (int i = 0; i < s1; i++) {
 		for (int j = 0; j < s2; j++) {
 			if (arr1[i]/nrUrenPerDag == arr2[j]/nrUrenPerDag
@@ -266,31 +269,39 @@ bool Rooster::specialIntersect(int arr1[], int s1, int arr2[], int s2) {
 bool Rooster::nulOfTweeVak(int rooster[MaxNrTijdsloten][MaxNrZalen])
 {
 	vector<int> lessen;
-	int l, hulp, docent1, docent2;
-	if (maxTijdslot == 1) {
+	int l, aantal, docent1, docent2;
+
+	if (maxTijdslot == 1 || nrUrenPerDag == 1) {
 		return true;
 	}
+
 	for (int i = 0; i < nrTracks; i++) {
-		for (int k = 0; k < nrDagen; k+=nrUrenPerDag) {
+		for (int j = 0; j < nrDagen*nrUrenPerDag; j+=nrUrenPerDag) {
 
 			// heeft een track dat we willen inroosteren al iets op die dag?
-			lessen = lesDag(i, rooster, k);
+			lessen = lesDag(i, rooster, j);
 			l = lessen.size();
 
 			// als er maar 1 les op een dag is, moet daar een reden voor zijn
 			if (l == 2) {
+			
+				// aantal vakken binnen de track
+				aantal = static_cast<int>(tracken[i]->vakken.size());
 
-				// als er maar 1 vak in die track is
-				if (tracken[i]->vakken.size() == 1) {
+				// als er maar 1 vak in deze track zit
+				if (aantal == 1) {
 					continue;
 				}
-				docent1 = vakken[rooster[lessen[0]][lessen[1]]]->docent;
-				hulp = static_cast<int>(tracken[i]->vakken.size());
 
-				// als alle docenten geen matchende tijden hebben
-				for (int j = 0; j < hulp; j++) {
-					docent2 = vakken[tracken[i]->vakken[j]]->docent;
-					if (docent1 != vakken[tracken[i]->vakken[j]]->docent &&
+				// de docent van het vak dat bij een track hoorde 
+				// waarvan er die dag maar een uur is
+				docent1 = vakken[rooster[lessen[0]][lessen[1]]]->docent;
+
+				// kijkt of de docent van het alleenstaand vak op een dag 
+				// les zou kunnen geven die overlapt met andere docenten
+				for (int k = 0; k < aantal; k++) {
+					docent2 = vakken[tracken[i]->vakken[k]]->docent;
+					if (docent1 != docent2 &&
 						specialIntersect(docenten[docent1]->tijdsloten,
 						docenten[docent1]->nrTijdsloten,
 						docenten[docent2]->tijdsloten,
