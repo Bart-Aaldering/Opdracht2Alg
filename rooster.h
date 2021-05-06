@@ -21,8 +21,8 @@ class Docent
 {
 	//Object Docent
 	public:
-		int nrTijdsloten;		// Aantal beschikbare tijdsloten
-		int tijdsloten[50];	// Array van tijdsloten
+		int nrTijdsloten;			// Aantal beschikbare tijdsloten
+		int tijdsloten[MaxNrTijdsloten];	// Array van tijdsloten
 	private:
 }; //Docent
 
@@ -30,10 +30,10 @@ class Vak
 {
 	// Object Vak
 	public:
-		string naam = "";	// Naam van het vak
-		int docent;			// Nummer van die docent
-		int nrTracks;		// Aantal tracks die dit vak hebben
-		int tracks[10];		// Array van die tracks
+		string naam = "";				// Naam van het vak
+		int docent;						// Nummer van die docent
+		int nrTracks;					// Aantal tracks die dit vak hebben
+		int tracks[MaxNrTracks];	// Array van die tracks
 	private:
 }; // Vak
 
@@ -41,7 +41,7 @@ class Track
 {
 	// Object Track
 	public:
-		vector<int> vakken;					// Vector van vakken van de track
+		vector<int> vakken;			// Vector van vakken van de track
 }; // Track
 
 class Rooster
@@ -124,9 +124,9 @@ class Rooster
 		void bepaalRoosterGretig (int rooster[MaxNrTijdsloten][MaxNrZalen]);
 
 	private:
-		Docent* docenten[40];	//Array van klassen van docenten (max 40)
-		Vak* vakken[50];			//Array van klassen van vakken (max 50)
-		Track* tracken[10];		//Array van klassen van tracken (max 10)
+		Docent* docenten[MaxNrDocenten];	//Array klassen van docenten (max 40)
+		Vak* vakken[MaxNrVakken];			//Array klassen van vakken (max 50)
+		Track* tracken[MaxNrTracks];		//Array klassen van tracken (max 10)
 
 		// Een test rooster voor bepaalMinRooster().
 		int manipRooster[MaxNrTijdsloten][MaxNrZalen];
