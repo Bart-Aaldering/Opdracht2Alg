@@ -16,8 +16,6 @@
 #include <cstring>
 #include <vector>
 
-#include <ctime>
-
 using namespace std;
 
 
@@ -428,7 +426,7 @@ bool Rooster::bepaalRooster(int rooster[MaxNrTijdsloten][MaxNrZalen],
 // Returned het laatste tijdslot waarop dit rooster les heeft
 int Rooster::bepaalMaxTijdslot(int rooster[MaxNrTijdsloten][MaxNrZalen])
 {
-	//Loop achterwaards door het array tot een waarde is gevonden
+	// Loop achterwaards door het array tot een waarde is gevonden
 	for (int i = nrDagen*nrUrenPerDag; i-- > 0;) {
 		for (int j = nrZalen; j-- > 0;) {
 			if (rooster[i][j] != -1) {
