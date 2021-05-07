@@ -13,6 +13,7 @@
 #include "standaard.h"
 #include "rooster.h"
 using namespace std;
+
 const int MaxBestandsNaamLengte = 30; // maximale lengte van een bestandsnaam
 
 //*************************************************************************
